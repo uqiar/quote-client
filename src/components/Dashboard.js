@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,6 +19,12 @@ import { mainListItems } from './listItems';
 import { useAuth } from '../context/auth'
 import Chart from './Chart';
 import Quote from './quote'
+import Add from '@material-ui/icons/Add'
+import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
+import AddQuoteModal from './addQuoteModal'
+import { getAllQuotes } from '../api/api'
+import { Link } from 'react-router-dom'
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+ 
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -104,13 +111,29 @@ export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const { setAuthTokens, authTokens } = useAuth();
+  const [allQuotes, setAllQuotes] = useState([])
+  const [showAddQuoteModal, setShowAddQuoteModal] = useState(false)
+  useEffect(() => {
+    onFetchQuotes()
+  }, [])
+  const onFetchQuotes = async () => {
+    try {
+      const quotes = await getAllQuotes()
+      if (quotes) {
+        setAllQuotes(quotes.data)
+      }
+    } catch (err) {
+
+    }
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const onLogOut=()=>{
+  const onLogOut = () => {
     setAuthTokens()
   }
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -132,8 +155,9 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Dashboard
           </Typography>
+          
           <IconButton color="inherit">
-              <ExitToApp onClick={onLogOut} />
+            <ExitToApp onClick={onLogOut} />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -163,12 +187,32 @@ export default function Dashboard() {
                 <Chart />
               </Paper>
             </Grid>
-           
-           <Quote/> <Quote/> <Quote/>
+           {
+             allQuotes.map((quote,key)=>(
+                 <Quote quote={quote} key={key}/>
+             ))
+           }
+            
           </Grid>
-          
+
         </Container>
       </main>
+
+      <div className="add-quote-wrapper">
+        <Tooltip title="Add New Quote">
+          <Fab onClick={() => setShowAddQuoteModal(true)} color="secondary" aria-label="add">
+            <Add />
+          </Fab>
+        </Tooltip>
+      </div>
+      {
+        showAddQuoteModal &&
+        <AddQuoteModal
+          open={showAddQuoteModal}
+          setOpen={setShowAddQuoteModal}
+          onFetch={onFetchQuotes}
+        />
+      }
     </div>
   );
 }

@@ -52,6 +52,7 @@ export default function SignIn() {
      if(user){
        console.log(user.data)
      setAuthTokens(user.data.token);
+     localStorage.setItem("user",JSON.stringify(user.data.user))
      }
     }catch(err){
 
@@ -107,7 +108,7 @@ export default function SignIn() {
             label="Remember me"
           />
           <Button
-            type="su Fbmit"
+            type="submit"
             fullWidth
             variant="contained"
             color="primary"

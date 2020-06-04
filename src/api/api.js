@@ -11,10 +11,17 @@ const createUser = async (data) => {
 const login = async (data) => {
     return await resolve(axios.post(`${apiBaseUrl}/login`, data).then(res => res.data));
 }
-
+const postQuote = async (data) => {
+    return await resolve(axios.post(`${apiBaseUrl}/quotes`, data).then(res => res.data));
+}
+const getAllQuotes = async () => {
+    return await resolve(axios.get(`${apiBaseUrl}/quotes`).then(res => res.data));
+}
 
 
 export {
     createUser,
-    login
+    login,
+    postQuote,
+    getAllQuotes
 }

@@ -18,7 +18,7 @@ const set401Interceptor = () => {
 const setAxiosAuthorizationHeader = (access_token) => {
     console.log('setAxiosAuthorizationHeader', access_token)
     if (access_token)
-        axios.defaults.headers.common['Authorization'] = "jwt " + access_token;
+        axios.defaults.headers.common['Authorization'] = "Bearer " + access_token;
 }
 
 export {
